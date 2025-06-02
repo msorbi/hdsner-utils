@@ -81,7 +81,9 @@ def main():
                 type_ = f[2:].lower()
                 if f.startswith("B-"):
                     if entries[type_]:
-                        dictionary[type_].add(join(entries[type_]))
+                        entry = join(entries[type_])
+                        if len(entry) > 2:
+                            dictionary[type_].add(entry)
                     entries[type_] = [fields[0]]
                 elif f.startswith("I-"):
                     entries[type_].append(fields[0])
