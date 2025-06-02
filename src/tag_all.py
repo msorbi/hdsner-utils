@@ -37,7 +37,6 @@ def main():
                 "loc_dictionary": os.path.join(train_dir, f"loc-{dictionary_size}.txt"),
                 "output": os.path.join(output_dir, "tags.txt")
             }
-            print(tag_kwargs, file=sys.stderr)
             output = tag(**tag_kwargs)
 
 if __name__ == "__main__":

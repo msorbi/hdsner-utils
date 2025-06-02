@@ -44,7 +44,6 @@ def main():
                 "n": args.n,
                 "field_delimiter": args.field_delimiter
             }
-            print(eval_kwargs, file=sys.stderr)
             output = eval(**eval_kwargs)
 
 if __name__ == "__main__":

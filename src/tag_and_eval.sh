@@ -8,5 +8,4 @@ python3 src/tag_all.py \
 python3 src/eval_all.py \
     --true-dir "data/datasets/ner_medieval_multilingual/FR/" \
     --pred-dir "output/ner_medieval_multilingual/FR/" \
-    --results-dir "results/ner_medieval_multilingual/FR/" \
-    --mode "strict"
+    --results-dir "results/ner_medieval_multilingual/FR/" 
