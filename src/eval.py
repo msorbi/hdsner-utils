@@ -36,7 +36,8 @@ def eval(true_file, pred_file, output_file, mode=None, n=2, field_delimiter="\t"
         y_pred=pred,
         output_dict=True,
         mode=mode,
-        digits=4
+        digits=4,
+        zero_division=1
     )
     for d in report.values():
         for k,v in d.items():
