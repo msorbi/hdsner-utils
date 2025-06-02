@@ -1,5 +1,7 @@
 # Data
-data/data_raw
+data
+output/
+results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
