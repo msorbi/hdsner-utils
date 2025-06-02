@@ -18,7 +18,7 @@ do
         do
             mkdir "${medner}/${lang}/${dataset%?}/${split}"
             # divide each split by language and original dataset (grep), and then divide the sentences to respect a max sequence lenght when possible (sentence_split.py), and export dictionaries
-            python3 data/sentence_split.py --input <(grep -A 1 "${tab}${lang}${tab}${dataset}" "${medner_raw}/${split}_set_all_17_03_2022.txt") --output-dir "${medner}/${lang}/${dataset%?}/${split}" #.txt" --dictionary "${medner}/${lang}/${dataset%?}/${split}.txt"
+            python3 src/sentence_split.py --input <(grep -A 1 "${tab}${lang}${tab}${dataset}" "${medner_raw}/${split}_set_all_17_03_2022.txt") --output-dir "${medner}/${lang}/${dataset%?}/${split}" #.txt" --dictionary "${medner}/${lang}/${dataset%?}/${split}.txt"
             if [ ! -s "${medner}/${lang}/${dataset%?}/${split}/plain.txt" ]
             then
                 rm -rf "${medner}/${lang}/${dataset%?}/${split}/"
