@@ -10,8 +10,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=str, required=True, help="original IOB tag file")
     parser.add_argument("--output", type=str, required=True, help="output IOB tag file")
-    parser.add_argument("--pers-dictionary", type=str, required=True, help="person dictionary")
-    parser.add_argument("--loc-dictionary", type=str, required=True, help="location dictionary")
+    parser.add_argument("--pers-dictionary", type=str, default="/dev/null", help="person dictionary text file")
+    parser.add_argument("--loc-dictionary", type=str, default="/dev/null", help="location dictionary text file")
     args = parser.parse_args()
     return args
 
@@ -48,7 +48,7 @@ def generate_iob(
     return output
 
 def tag(**kwargs) -> list:
-    categories = ["PERS", "LOC"]
+    categories = [x for x in ["PERS", "LOC"] if kwargs.get(f"{x.lower()}_dictionary","/dev/null") != "/dev/null"]
     dictionary = {}
     with open(kwargs["input"], "r") as fp:
         data = fp.read()
@@ -59,7 +59,7 @@ def tag(**kwargs) -> list:
         with open(kwargs[f"{category.lower()}_dictionary"], "r") as fp:
             data = fp.read()
         dictionary[category] = spacy_lookup.Entity(data.strip().split("\n"))
-        nlp[category] = spacy.blank("fr") # spacy.load('fr_core_news_sm')
+        nlp[category] = spacy.blank("fr")
         nlp[category].add_pipe(dictionary[category], last=True)
     
     output = []

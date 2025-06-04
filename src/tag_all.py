@@ -3,41 +3,46 @@ import argparse
 import os
 import sys
 from tag import tag
+from merge_labels import merge_files
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input-dir", type=str, default="data/datasets/ner_medieval_multilingual/FR/", help="input dataset directory")
+    parser.add_argument("--input-dir", type=str, default="data/data_raw/ner_medieval_multilingual/FR/", help="input dataset directory")
     parser.add_argument("--output-dir", type=str, default="output/ner_medieval_multilingual/FR/", help="output directory")
-    parser.add_argument("--dictionary-size", type=int, default=10, help="size of dictionary samples to use, in percentage, dictionaries must exist")
     args = parser.parse_args()
     return args
 
 def main():
     args = parse_args()
-    dictionary_size = str(args.dictionary_size).rjust(3,"0")
     inputs = os.walk(args.input_dir)
-    files = {k:v for k,_,v in inputs}
-    for k,v in files.items():
-        if "tags.txt" in v:
-            train_dir = os.path.join(
-                os.path.dirname(k),
-                "train"
-            )
+    # walk = {k:(v,w) for k,v,w in inputs}
+    # for base_dir,(subdirs,files) in walk.items():
+    for base_dir,subdirs,files in inputs:
+        if "MULTICLASS" in subdirs:
+            subdirs = [x for x in subdirs if x!="MULTICLASS"]
             output_dir = os.path.join(
                 args.output_dir,
                 os.path.relpath(
-                    k,
+                    base_dir,
                     args.input_dir
                 )
             )
-            os.makedirs(output_dir, exist_ok=True)
-            tag_kwargs = {
-                "input": os.path.join(k,"tags.txt"),
-                "pers_dictionary": os.path.join(train_dir, f"pers-{dictionary_size}.txt"),
-                "loc_dictionary": os.path.join(train_dir, f"loc-{dictionary_size}.txt"),
-                "output": os.path.join(output_dir, "tags.txt")
-            }
-            output = tag(**tag_kwargs)
+            for split in ["train", "val", "test"]:
+                for category in subdirs:
+                    os.makedirs(os.path.join(output_dir, category), exist_ok=True)
+                    tag_kwargs = {
+                        "input": os.path.join(base_dir, category, f"{split}.txt"),
+                        f"{category.lower()}_dictionary": os.path.join(base_dir, category, f"dict.txt"),
+                        "output": os.path.join(output_dir, category, f"{split}.txt")
+                    }
+                    output = tag(**tag_kwargs)
+                os.makedirs(os.path.join(output_dir, "MULTICLASS"), exist_ok=True)
+                merge_files(
+                    pers_input=os.path.join(output_dir, "PERS", f"{split}.txt"),
+                    loc_input=os.path.join(output_dir, "LOC", f"{split}.txt"),
+                    output=os.path.join(output_dir, "MULTICLASS", f"{split}.txt"),
+                )
+            
 
 if __name__ == "__main__":
     main()
