@@ -7,8 +7,8 @@ from merge_labels import merge_files
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input-dir", type=str, default="data/data_raw/ner_medieval_multilingual/FR/", help="input dataset directory")
-    parser.add_argument("--output-dir", type=str, default="output/ner_medieval_multilingual/FR/", help="output directory")
+    parser.add_argument("--input-dir", type=str, default="data/supervised/ner_medieval_multilingual/FR/", help="input dataset directory")
+    parser.add_argument("--output-dir", type=str, default="data/output/ner_medieval_multilingual/FR/", help="output directory")
     args = parser.parse_args()
     return args
 

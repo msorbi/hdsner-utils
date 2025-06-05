@@ -6,8 +6,8 @@ from eval import eval
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--true-dir", type=str, default="data/data_raw/ner_medieval_multilingual/FR/", help="input dataset directory")
-    parser.add_argument("--pred-dir", type=str, default="output/ner_medieval_multilingual/FR/", help="output directory")
+    parser.add_argument("--true-dir", type=str, default="data/supervised/ner_medieval_multilingual/FR/", help="input dataset directory")
+    parser.add_argument("--pred-dir", type=str, default="data/output/ner_medieval_multilingual/FR/", help="output directory")
     parser.add_argument("--results-dir", type=str, default="results/ner_medieval_multilingual/FR/", help="output directory")
     parser.add_argument("--mode", type=str, default=None, help="seqeval.metrics.classification_report mode (None|\"strict\")")
     parser.add_argument("--n", type=int, default=2, help="number of predictions per token (columns in the files, PERS and LOC by default)")

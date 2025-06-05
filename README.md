@@ -16,4 +16,4 @@ Stacked Embeddings and BERT-based Models](https://gitlab.com/magistermilitum/ner
 ### Preprocess data
 `bash src/preprocess.sh`
 ## Tag and evaluation with dictionary matching (default dictionary: 10% sample of train dictionary)
-`bash src/tag_and_eval.sh` # tags will be produced in `output/` and scores in `results/`
+`bash src/tag_and_eval.sh` # tags will be produced in `data/output/` and scores in `results/`
