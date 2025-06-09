@@ -12,8 +12,8 @@ Stacked Embeddings and BERT-based Models](https://gitlab.com/magistermilitum/ner
 `conda activate hdsner`
 ## Data preparation
 ### Download data
-`bash src/download.sh`
+`bash src/download.sh` # downloads data to `data/data_raw/`
 ### Preprocess data
-`bash src/preprocess.sh`
+`bash src/preprocess.sh` # creates supervised and distantly supervised datasets in `data/supervised/` and `data/distant/`
 ## Tag and evaluation with dictionary matching (default dictionary: 10% sample of train dictionary)
 `bash src/tag_and_eval.sh` # tags will be produced in `data/output/` and scores in `results/`

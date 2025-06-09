@@ -43,7 +43,8 @@ do
                     --input <(egrep -A 1 "${tab}${lang}${tab}${dataset_grep}" "${medner_raw}/${split}_set_all_17_03_2022.txt") \
                     --output-dir "${medner_supervised}/${lang}/${dataset%?}/${category}"\
                     --split "${split}" \
-                    --classes "${class_a},${class}"
+                    --classes "${class_a},${class}" \
+                    $1
                 if [ ! -s "${medner_supervised}/${lang}/${dataset%?}/${category}/train.txt" ]
                 then
                     rm -rf "${medner_supervised}/${lang}/${dataset%?}/${category}/"
