@@ -5,6 +5,7 @@ import os
 import random
 import numpy as np
 import json
+import re
 from merge_labels import merge_iob_labels
 
 def parse_args():
@@ -135,6 +136,7 @@ def main():
                 
     data_new, stats, priors = filter_classes(data, range_l, range_r)
     data_new = "\n".join(args.field_delimiter.join(x) for x in data_new)
+    data_new = re.sub(r"\n{3,}", "\n\n", data_new)
     with open(os.path.join(args.output_dir, f"{args.split}.txt"), "w") as fp:
         fp.write(data_new)
     if args.split == "train" and range_l == range_r:
