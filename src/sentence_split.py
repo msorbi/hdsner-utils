@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--output-dir", type=str, required=True, help="output directory")
     parser.add_argument("--split", type=str, required=True, help="dataset split (train|eval|test)")
     parser.add_argument("--classes", type=str, required=True, help="classes to consider, comma separated range including extremes, 1-based")
-    parser.add_argument("--dictionary-size", type=int, default=10, help="size of dictionary sample to export, in percentage")
+    parser.add_argument("--dictionary-size", type=int, default=100, help="size of dictionary sample to export, in percentage")
     parser.add_argument("--max-seq-length", type=int, default=512, help="maximum output sequence length, notes: splits occur only on end-tokens")
     parser.add_argument("--seq-end-tokens", type=str, default=".|;|,|Et|et|Le", help="end sequence tokens, case-sensitive, separated by |")
     parser.add_argument("--field-delimiter", type=str, default="\t", help="field delimiter, default TAB")
@@ -43,7 +43,7 @@ def join(tokens:list) -> str:
 
 def sample(dictionary:list, percentage:int, seed:int) -> list:
     size = (len(dictionary)*percentage) // 100
-    random.seed(42)
+    random.seed(seed)
     return sorted(random.sample(dictionary, size))
 
 def filter_classes(data, l, r):

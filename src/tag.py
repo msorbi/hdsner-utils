@@ -4,7 +4,7 @@ import os
 import spacy
 import spacy_lookup #import Entity
 from typing import List, Tuple, Dict
-from sentence_split import detokenize
+from sentence_split import detokenize, sample
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -12,6 +12,8 @@ def parse_args():
     parser.add_argument("--output", type=str, required=True, help="output IOB tag file")
     parser.add_argument("--pers-dictionary", type=str, default="/dev/null", help="person dictionary text file")
     parser.add_argument("--loc-dictionary", type=str, default="/dev/null", help="location dictionary text file")
+    parser.add_argument("--dictionary-size", type=int, default=100, help="size of dictionary sample to use, in percentage")
+    parser.add_argument("--seed", type=int, default=42, help="random seed for dictionary sampling")
     args = parser.parse_args()
     return args
 
@@ -58,7 +60,10 @@ def tag(**kwargs) -> list:
     for category in categories:
         with open(kwargs[f"{category.lower()}_dictionary"], "r") as fp:
             data = fp.read()
-        dictionary[category] = spacy_lookup.Entity(data.strip().split("\n"))
+        sampled_dict = sample(data.strip().split("\n"), kwargs["dictionary_size"], kwargs["seed"])
+        with open(os.path.join(os.path.dirname(kwargs["output"]), "dict.txt"), "w") as fp:
+            fp.write("\n".join(sampled_dict) + "\n")
+        dictionary[category] = spacy_lookup.Entity(sampled_dict)
         nlp[category] = spacy.blank("fr")
         nlp[category].add_pipe(dictionary[category], last=True)
     
