@@ -5,7 +5,33 @@ datasets=""CBMA_" "CDBE_" "CODCAR-" "CODEA-" "CORHEN-" "HOME-""
 
 medner_raw="data/data_raw/ner_medieval_multilingual"
 medner_supervised="data/supervised/ner_medieval_multilingual"
-medner_ds="data/distant/ner_medieval_multilingual"
+
+# Parse arguments
+DICT_SIZES=()
+OTHER_ARGS=()
+PARSE_DICT_SIZES=false
+AFTER_SEPARATOR=false
+for arg in "$@"; do
+    if [ "$AFTER_SEPARATOR" = true ]; then
+        # If we are after the -- separator, collect all remaining arguments
+        OTHER_ARGS+=("$arg")
+    elif [ "$arg" = "--" ]; then
+        # Found the -- separator, set flag to start collecting other arguments
+        AFTER_SEPARATOR=true
+        PARSE_DICT_SIZES=false # Stop parsing dict sizes
+    elif [ "$arg" = "--dictsizes" ]; then
+        # Found the --dictsizes flag, set flag to start collecting dict sizes
+        PARSE_DICT_SIZES=true
+    elif [ "$PARSE_DICT_SIZES" = true ]; then
+        # If we are parsing dict sizes, check if the argument is an integer
+        if [[ "$arg" =~ ^[0-9]+$ ]]; then
+            DICT_SIZES+=("$arg")
+        else
+            echo "Warning: '$arg' is not a valid integer for --dictsizes. Stopping parsing dictsizes."
+            PARSE_DICT_SIZES=false # Stop parsing if a non-integer is found
+        fi
+    fi
+done
 
 mkdir -p "${medner_supervised}/"
 tab=$'\t'
@@ -44,7 +70,7 @@ do
                     --output-dir "${medner_supervised}/${lang}/${dataset%?}/${category}"\
                     --split "${split}" \
                     --classes "${class_a},${class}" \
-                    $1
+                    ${OTHER_ARGS[@]}
                 if [ ! -s "${medner_supervised}/${lang}/${dataset%?}/${category}/train.txt" ]
                 then
                     rm -rf "${medner_supervised}/${lang}/${dataset%?}/${category}/"
@@ -57,28 +83,33 @@ done
 find ${medner_supervised} -type d -empty -exec rmdir '{}' ';' 2> /dev/null
 
 # build train splits with dictionary matching
-rm -r "${medner_ds}"
-mkdir -p "`dirname ${medner_ds}`"
-cp -r "${medner_supervised}" "${medner_ds}"
-
-for lang in ${langs}
+for dict_size in ${DICT_SIZES[@]}
 do
-    for dataset in ${datasets}
+    medner_ds="data/distant-0.${dict_size}/ner_medieval_multilingual"
+    rm -r "${medner_ds}"
+    mkdir -p "`dirname ${medner_ds}`"
+    cp -r "${medner_supervised}" "${medner_ds}"
+
+    for lang in ${langs}
     do
-        if [ -f "${medner_supervised}/${lang}/${dataset%?}/PERS/train.txt" ]
-        then
-            for category in PERS LOC
-            do
-                category_lower="`echo ${category} | tr '[A-Z]' '[a-z]'`"
-                python3 src/tag.py \
-                    --input "${medner_supervised}/${lang}/${dataset%?}/${category}/train.txt" \
-                    --output "${medner_ds}/${lang}/${dataset%?}/${category}/train.txt" \
-                    --${category_lower}-dictionary "${medner_supervised}/${lang}/${dataset%?}/${category}/dict.txt"
-            done
-            python3 src/merge_labels.py \
-                --pers-input "${medner_ds}/${lang}/${dataset%?}/PERS/train.txt" \
-                --loc-input "${medner_ds}/${lang}/${dataset%?}/LOC/train.txt" \
-                --output "${medner_ds}/${lang}/${dataset%?}/MULTICLASS/train.txt"
-        fi
+        for dataset in ${datasets}
+        do
+            if [ -f "${medner_supervised}/${lang}/${dataset%?}/PERS/train.txt" ]
+            then
+                for category in PERS LOC
+                do
+                    category_lower="`echo ${category} | tr '[A-Z]' '[a-z]'`"
+                    python3 src/tag.py \
+                        --input "${medner_supervised}/${lang}/${dataset%?}/${category}/train.txt" \
+                        --output "${medner_ds}/${lang}/${dataset%?}/${category}/train.txt" \
+                        --dictionary-size "${dict_size}" \
+                        --${category_lower}-dictionary "${medner_supervised}/${lang}/${dataset%?}/${category}/dict.txt"
+                done
+                python3 src/merge_labels.py \
+                    --pers-input "${medner_ds}/${lang}/${dataset%?}/PERS/train.txt" \
+                    --loc-input "${medner_ds}/${lang}/${dataset%?}/LOC/train.txt" \
+                    --output "${medner_ds}/${lang}/${dataset%?}/MULTICLASS/train.txt"
+            fi
+        done
     done
 done

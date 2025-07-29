@@ -14,6 +14,6 @@ Stacked Embeddings and BERT-based Models](https://gitlab.com/magistermilitum/ner
 ### Download data
 `bash src/download.sh` # downloads data to `data/data_raw/`
 ### Preprocess data
-`bash src/preprocess.sh` # creates supervised and distantly supervised datasets in `data/supervised/` and `data/distant/`
+`bash src/preprocess.sh --dictsizes 10 20` # creates supervised and distantly supervised datasets in `data/supervised/`, `data/distant-0.10/`, and `data/distant-0.20/`
 ## Tag and evaluation with dictionary matching (default dictionary: 10% sample of train dictionary)
 `bash src/tag_and_eval.sh` # tags will be produced in `data/output/` and scores in `results/`

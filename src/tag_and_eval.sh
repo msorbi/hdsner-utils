@@ -1,5 +1,6 @@
 #!/bin/bash
 # tag using ditionaries exported in during preprocess.sh
+# script for supervised case - full dictionaries
 python3 src/tag_all.py \
     --input-dir data/supervised/ner_medieval_multilingual/FR/ \
     --output-dir data/output/ner_medieval_multilingual/FR/ \
