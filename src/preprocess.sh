@@ -85,7 +85,8 @@ find ${medner_supervised} -type d -empty -exec rmdir '{}' ';' 2> /dev/null
 # build train splits with dictionary matching
 for dict_size in ${DICT_SIZES[@]}
 do
-    medner_ds="data/distant-0.${dict_size}/ner_medieval_multilingual"
+    dict_size_lab=`python3 -c "print(f'{${dict_size}/100:.2f}')"`
+    medner_ds="data/distant-${dict_size_lab}/ner_medieval_multilingual"
     rm -r "${medner_ds}"
     mkdir -p "`dirname ${medner_ds}`"
     cp -r "${medner_supervised}" "${medner_ds}"
