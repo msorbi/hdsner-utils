@@ -29,12 +29,9 @@ def main():
                         args.true_dir
                     )
                 )
-                results_dir = os.path.join(
-                    args.results_dir,
-                    os.path.relpath(
-                        k,
-                        args.true_dir
-                    )
+                results_dir = args.results_dir + os.path.relpath(
+                    k,
+                    args.true_dir
                 )
                 os.makedirs(results_dir, exist_ok=True)
                 eval_kwargs = {

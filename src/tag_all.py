@@ -9,6 +9,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-dir", type=str, default="data/supervised/ner_medieval_multilingual/FR/", help="input dataset directory")
     parser.add_argument("--output-dir", type=str, default="data/output/ner_medieval_multilingual/FR/", help="output directory")
+    # parser.add_argument("--dictionary-size", type=int, default=100, help="size of dictionary sample to use, in percentage")
+    # parser.add_argument("--seed", type=int, default=42, help="random seed for dictionary sampling")
     args = parser.parse_args()
     return args
 
@@ -33,7 +35,9 @@ def main():
                     tag_kwargs = {
                         "input": os.path.join(base_dir, category, f"{split}.txt"),
                         f"{category.lower()}_dictionary": os.path.join(base_dir, category, f"dict.txt"),
-                        "output": os.path.join(output_dir, category, f"{split}.txt")
+                        "output": os.path.join(output_dir, category, f"{split}.txt"),
+                        "dictionary_size": 100,
+                        "seed": 42
                     }
                     output = tag(**tag_kwargs)
                 os.makedirs(os.path.join(output_dir, "MULTICLASS"), exist_ok=True)
